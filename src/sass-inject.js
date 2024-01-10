@@ -47,19 +47,17 @@ async function sassImporter(request, done) {
     // Currently only supporting scss imports due to
     // https://github.com/sass/libsass/issues/1695
     resolved = await resolvePath(request);
+    if(!window.css){
+      window.css = {};
+    }
+    if(!window.css[resolved]){
       const resp = await reqwest(resolved);
-    //const partialPath = resolved.replace(/\/([^/]*)$/, '/_$1');
-    //const resp = await reqwest(partialPath);
-    // In Cordova Apps the response is the raw XMLHttpRequest
-    content = resp.responseText ? resp.responseText : resp;
+       window.css[resolved] = resp.responseText ? resp.responseText : resp;
+    }
+    content = window.css[resolved];
   } catch (e) {
-    try {
-      //const resp = await reqwest(resolved);
-      content = resp.responseText ? resp.responseText : resp;
-    } catch (er) {
       done();
       return;
-    }
   }
   done({ content, path: resolved });
 }
@@ -127,10 +125,16 @@ export default async function sassInject(load) {
   options.indentedSyntax = indentedSyntax;
   options.importer = { urlBase };
   // load initial scss file
-  const resp = await reqwest(load.address);
+  if(!window.css){
+    window.css = {};
+  }
+  if(!window.css[load.address]){
+    const resp = await reqwest(load.address);
+     window.css[load.address] = resp.responseText ? resp.responseText : resp;
+  }
   // In Cordova Apps the response is the raw XMLHttpRequest
   const scss = {
-    content: resp.responseText ? resp.responseText : resp,
+    content: window.css[load.address],
     options,
   };
   return compile(scss, load.address);
