@@ -50,9 +50,10 @@ async function sassImporter(request, done) {
     if(!window.css){
       window.css = {};
     }
-    if(!window.css[resolved]){
+    var fileName = resolved.split("/").reverse()[0];
+    if(!window.css[fileName]){
       const resp = await reqwest(resolved);
-       window.css[resolved] = resp.responseText ? resp.responseText : resp;
+       window.css[fileName] = resp.responseText ? resp.responseText : resp;
     }
     content = window.css[resolved];
   } catch (e) {
@@ -128,9 +129,11 @@ export default async function sassInject(load) {
   if(!window.css){
     window.css = {};
   }
-  if(!window.css[load.address]){
+  
+    var fileName = load.address.split("/").reverse()[0];
+  if(!window.css[fileName]){
     const resp = await reqwest(load.address);
-     window.css[load.address] = resp.responseText ? resp.responseText : resp;
+     window.css[fileName] = resp.responseText ? resp.responseText : resp;
   }
   // In Cordova Apps the response is the raw XMLHttpRequest
   const scss = {
