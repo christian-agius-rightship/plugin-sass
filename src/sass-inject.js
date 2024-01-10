@@ -55,7 +55,7 @@ async function sassImporter(request, done) {
       const resp = await reqwest(resolved);
        window.css[fileName] = resp.responseText ? resp.responseText : resp;
     }
-    content = window.css[resolved];
+    content = window.css[fileName];
   } catch (e) {
       done();
       return;
@@ -137,7 +137,7 @@ export default async function sassInject(load) {
   }
   // In Cordova Apps the response is the raw XMLHttpRequest
   const scss = {
-    content: window.css[load.address],
+    content: window.css[fileName],
     options,
   };
   return compile(scss, load.address);
