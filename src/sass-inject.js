@@ -47,13 +47,14 @@ async function sassImporter(request, done) {
     // Currently only supporting scss imports due to
     // https://github.com/sass/libsass/issues/1695
     resolved = await resolvePath(request);
-    const partialPath = resolved.replace(/\/([^/]*)$/, '/_$1');
-    const resp = await reqwest(partialPath);
+      const resp = await reqwest(resolved);
+    //const partialPath = resolved.replace(/\/([^/]*)$/, '/_$1');
+    //const resp = await reqwest(partialPath);
     // In Cordova Apps the response is the raw XMLHttpRequest
     content = resp.responseText ? resp.responseText : resp;
   } catch (e) {
     try {
-      const resp = await reqwest(resolved);
+      //const resp = await reqwest(resolved);
       content = resp.responseText ? resp.responseText : resp;
     } catch (er) {
       done();
